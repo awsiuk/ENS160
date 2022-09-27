@@ -97,6 +97,3 @@ class myENS160:
     def getECO2(self):
         buf=self.i2c.readfrom_mem(ENS160_ADDR,ENS160_DATA_ECO2_REG,2)
         return (buf[1]<<8 | buf[0])
-
-
-
