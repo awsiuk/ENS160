@@ -73,18 +73,22 @@ class myENS160:
         time.sleep(0.2)
         
     def __init__(self):
+        # DONT forget to change the pin assingment if you are using a esp32 or different board
         SCL_PIN=machine.Pin(1)
         SDA_PIN=machine.Pin(0)
         print("initialize i2c")
-        self.i2c=machine.I2C(0,scl=SCL_PIN, sda=SDA_PIN,freq=400000)
-        print("setting OPMODE")
-        buf=bytearray(1)
-        buf[0]=ENS160_STANDARD_MODE
-        self.i2c.writeto_mem(ENS160_ADDR, ENS160_OPMODE_REG, buf)
-        time.sleep(0.2)
-        #print("initial calibration")
-        self.calibrate_temp(25)
-        self.calibrate_hum(50)
+        try:
+            self.i2c=machine.I2C(0,scl=SCL_PIN, sda=SDA_PIN,freq=400000)
+            print("setting OPMODE")
+            buf=bytearray(1)
+            buf[0]=ENS160_STANDARD_MODE
+            self.i2c.writeto_mem(ENS160_ADDR, ENS160_OPMODE_REG, buf)
+            time.sleep(0.2)
+            #print("initial calibration")
+            self.calibrate_temp(25)
+            self.calibrate_hum(50)
+        except OSError:
+            print('failed to init, Assigned the correct pins on machine.Pin() if you get [Errno 19] ENODEV ')
         
     def getAQI(self):
         buf=self.i2c.readfrom_mem(ENS160_ADDR,ENS160_DATA_AQI_REG,1)
