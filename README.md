@@ -1,7 +1,7 @@
 # ENS160
 ENS160 library for micropython
 
-This class was created based on DFROBOT implementation but based on micropython language and machine library. Typical use case is related all these microcontrollers with micropython that do not have full OS stack. Code was tested with Raspberry Pi PICO.
+This class was created based on DFROBOT implementation but based on micropython language and machine library. Typical use case is related to all these microcontrollers with micropython that do not have full OS stack. Code was tested with Raspberry Pi PICO.
 
 It allows to get data from ENS160 chip.
 
