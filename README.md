@@ -8,3 +8,6 @@ It allows to get data from ENS160 chip.
 Vendor chip documentation can be found under this link:
 https://www.mouser.com/datasheet/2/1081/SC_001224_DS_1_ENS160_Datasheet_Rev_0_95-2258311.pdf
 
+#### LICENCE ####
+
+You may use this code in comercial and personal use without fee. You are free to modify it and create copy of it and make your own branch. When modifying this code on personal or comericial purpose just leave credit information in your code.
