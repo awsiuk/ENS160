@@ -59,13 +59,21 @@ ENS160_COMMAND_CLRGPR = 0xCC
 
 class myENS160:
     def calibrate_temp(self, _temp):
+        #doing calculations based on chip documentation on page 27
+        #not yet sure if this should be float as argument to function is int - to be tested
+        _temp=(_temp + 273.15) * 64
+        #building array that will hold data of _temp
         buf = bytearray(2)
+        #grabing low byte
         buf[0] = _temp & 0xFF
+        #grabing high byte of _temp
         buf[1] = (_temp & 0xFF00) >> 8
         self.i2c.writeto_mem(ENS160_ADDR, ENS160_TEMP_IN_REG, buf)
         time.sleep(0.2)
         
     def calibrate_hum(self, _rh):
+        #doing calculations based on chip documentation on page 27
+        _rh=_rh*512
         buf = bytearray(2)
         buf[0] = _rh & 0xFF
         buf[1] = (_rh & 0xFF00) >> 8
