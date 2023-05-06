@@ -81,6 +81,7 @@ class myENS160:
         
     def calibrate_hum(self, _rh):
         #doing calculations based on chip documentation on page 27
+        # this should be set mostly in cases when HUM is <20% or >80% it should be left unset or set to 25.
         _rh=_rh*512
         buf = bytearray(2)
         buf[0] = _rh & 0xFF
