@@ -3,6 +3,11 @@ import time
 
 # this module require initialization of I2C from outside this class.
 # Whenever object is initiated it require getting i2c object that is passed as argument
+# After power ON status in register 0x20 should be 0x8b 
+# 8th bit should be 1 if ENS160 is operational otherwise it will be 0
+# 3rd and 4th bit should be not set to 0b11 (DEC:3) 
+# 1st and 2nd bit shows that data in the TVOC and eCO2 regs are ready to be read
+# in register 0x00 holds 2 bytes of device ID that by default should be 0x60 and 0x01
 
 ENS160_ADDR = 0x53
 
