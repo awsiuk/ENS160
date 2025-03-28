@@ -56,41 +56,38 @@ ENS160_COMMAND_GET_APPVER = 0x0E
 ## Clears GPR Read Registers Command.
 ENS160_COMMAND_CLRGPR = 0xCC
 
-
 class myENS160:
     def calibrate_temp(self, _temp):
         #doing calculations based on chip documentation on page 27
+        #https://www.mouser.com/datasheet/2/1081/SC_001224_DS_1_ENS160_Datasheet_Rev_0_95-2258311.pdf
         #not yet sure if this should be float as argument to function is int - to be tested
-        _temp=(_temp + 273.15) * 64
+        _temp=int((_temp + 273.15) * 64)
         #building array that will hold data of _temp
         buf = bytearray(2)
-        #grabing low byte
+        #grabing low byte of _temp
         buf[0] = _temp & 0xFF
-        #grabing high byte of _temp
+        #grabing high byte of _temp and shifting it by 8 bits to the right
         buf[1] = (_temp & 0xFF00) >> 8
-        self.i2c.writeto_mem(ENS160_ADDR, ENS160_TEMP_IN_REG, buf)
+        self._i2c.writeto_mem(ENS160_ADDR, ENS160_TEMP_IN_REG, buf)
         time.sleep(0.2)
         
     def calibrate_hum(self, _rh):
         #doing calculations based on chip documentation on page 27
+        #https://www.mouser.com/datasheet/2/1081/SC_001224_DS_1_ENS160_Datasheet_Rev_0_95-2258311.pdf
         _rh=_rh*512
         buf = bytearray(2)
         buf[0] = _rh & 0xFF
         buf[1] = (_rh & 0xFF00) >> 8
-        self.i2c.writeto_mem(ENS160_ADDR, ENS160_RH_IN_REG, buf)
+        self._i2c.writeto_mem(ENS160_ADDR, ENS160_RH_IN_REG, buf)
         time.sleep(0.2)
         
-    def __init__(self):
-        # DONT forget to change the pin assingment if you are using a esp32 or different board
-        SCL_PIN=machine.Pin(1)
-        SDA_PIN=machine.Pin(0)
-        print("initialize i2c")
+    def __init__(self, i2c):
         try:
-            self.i2c=machine.I2C(0,scl=SCL_PIN, sda=SDA_PIN,freq=400000)
+            self._i2c=i2c
             print("setting OPMODE")
             buf=bytearray(1)
             buf[0]=ENS160_STANDARD_MODE
-            self.i2c.writeto_mem(ENS160_ADDR, ENS160_OPMODE_REG, buf)
+            self._i2c.writeto_mem(ENS160_ADDR, ENS160_OPMODE_REG, buf)
             time.sleep(0.2)
             #print("initial calibration")
             self.calibrate_temp(25)
@@ -99,13 +96,17 @@ class myENS160:
             print('failed to init, Assigned the correct pins on machine.Pin() if you get [Errno 19] ENODEV ')
         
     def getAQI(self):
-        buf=self.i2c.readfrom_mem(ENS160_ADDR,ENS160_DATA_AQI_REG,1)
+        buf=self._i2c.readfrom_mem(ENS160_ADDR,ENS160_DATA_AQI_REG,1)
+        #print("buf: ",buf)
         return (buf[0])
   
     def getTVOC(self):
-        buf=self.i2c.readfrom_mem(ENS160_ADDR,ENS160_DATA_TVOC_REG,2)
+        buf=self._i2c.readfrom_mem(ENS160_ADDR,ENS160_DATA_TVOC_REG,2)
+        #print("buf: ",buf)
         return (buf[1]<<8 | buf[0])
     
     def getECO2(self):
-        buf=self.i2c.readfrom_mem(ENS160_ADDR,ENS160_DATA_ECO2_REG,2)
+        buf=self._i2c.readfrom_mem(ENS160_ADDR,ENS160_DATA_ECO2_REG,2)
+        #print("buf: ",buf)
         return (buf[1]<<8 | buf[0])
+    
